@@ -1,5 +1,6 @@
 import unittest
 import os
+from parameterized import parameterized
 
 import boto3
 
@@ -7,8 +8,10 @@ class TestApiGwV2(unittest.TestCase):
     def setUp(self) -> None:
         self.client = boto3.client('apigatewayv2', endpoint_url=os.getenv('ENDPOINT_URL'))
 
-    def test_api_has_integration(self):
-        name = 'some_api_name'
+    @parameterized.expand([
+        ["support-ui-login"],
+    ])
+    def test_api_has_integration(self, name):
         api = self._find_api_by_name(name)
         self.assertIsNotNone(api)
         integrations_obj = self.client.get_integrations(ApiId=api['ApiId'])
